@@ -1,0 +1,33 @@
+# Dependencies
+markdown:         rdiscount
+highlighter:      false
+
+# Permalinks
+permalink:        pretty
+
+# Server
+destination:      ./_gh_pages
+exclude:          [".editorconfig", ".gitignore", ".ruby-version", "bower.json", "composer.json", "CONTRIBUTING.md", "CNAME", "LICENSE", "Gruntfile.js", "package.json", "node_modules", "README.md", "less"]
+port:             4000
+
+# Custom vars
+repo:             https://github.com/twbs/bootstrap
+download:         https://github.com/twbs/bootstrap/archive/v3.0.0.zip
+download_dist:    https://github.com/twbs/bootstrap/releases/download/v3.0.0/bootstrap-3.0.0-dist.zip
+
+blog:             http://bhoover10001.github.io
+expo:             http://bhoover10001.github.io
+
+cdn_css:          //netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css
+cdn_theme_css:    //netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css
+cdn_js:           //netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js
+
+title:            Going over the cliff
+email:            brian.hoover1@gmail.com
+description:      "Going full speed over the cliff"
+header-img:       "img/header.jpg"
+
+baseurl:          ""
+twitter_username: bhoover10001
+github_username:  bhoover10001
+facebook_username:  

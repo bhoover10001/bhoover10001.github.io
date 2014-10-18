@@ -1,5 +1,5 @@
 ---
 layout: default
-title: The first Post
+title: Giants Win!!!
 ---
-This is the first post!
+Go Giants!!!
