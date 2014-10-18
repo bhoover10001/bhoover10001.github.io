@@ -55,7 +55,7 @@ hr.small {
   left: 0;
   z-index: 3;
   width: 100%;
-  font-family: 'Carrois Gothic', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: '1942-webfont';
 }
 
 .navbar-custom .navbar-brand {
@@ -155,7 +155,8 @@ hr.small {
 .intro-header .site-heading,
 .intro-header .post-heading,
 .intro-header .page-heading {
-  padding: 100px 0 50px;
+  padding: 60px 0 30px;
+  font-family: '1942-webfont';
   color: white;
 }
 
@@ -167,6 +168,7 @@ hr.small {
 .intro-header .site-heading h1,
 .intro-header .page-heading h1 {
   margin-top: 0;
+  font-family: '1942-webfont';
   font-size: 50px;
 }
 
@@ -174,7 +176,6 @@ hr.small {
 .intro-header .page-heading .subheading {
   display: block;
   margin: 10px 0 0;
-  font-family: 'Carrois Gothic', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 24px;
   font-weight: 300;
   line-height: 1.1;
@@ -183,7 +184,7 @@ hr.small {
 @media only screen and (min-width: 768px) {
   .intro-header .site-heading h1,
   .intro-header .page-heading h1 {
-    font-size: 80px;
+    font-size: 50px;
   }
 }
 
@@ -486,4 +487,10 @@ body {
   .bs-social-buttons li:first-child {
     padding-left: 0;
   }
+}
+
+@font-face {
+  font-family: '1942-webfont';
+  src: url('../fonts/1942-webfont.eot');
+  src: url('../fonts/1942-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/1942-webfont.woff') format('woff'), url('../fonts/1942-webfont.ttf') format('truetype'), url('../fonts/1942-webfont.svg#glyphicons-halflingsregular') format('svg');
 }
