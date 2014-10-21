@@ -489,6 +489,10 @@ body {
   }
 }
 
+div.centered {
+  text-align: center;
+}
+
 @font-face {
   font-family: '1942-webfont';
   src: url('../fonts/1942-webfont.eot');
