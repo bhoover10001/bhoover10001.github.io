@@ -24,6 +24,12 @@ layout: home
   <div class="row">
     <div class="col-sm-8 blog-main">
       {{ content }}
+      {% include vocabulary.html %}
+      <br />{% if page.date%} Published on {{ page.date | date: "%-d %B %Y"}}{% endif %}
+      <div class="container centered">
+        <img src="/img/seperator.png" />
+      </div>
+      <br />{% if page.about_author %} {{ page.about_author }}{% else %}{{ site.about_author }}{% endif %}
     </div>
     <div class="col-sm-3 col-sm-offset1 blog-sidebar">
       <ul>
@@ -35,7 +41,4 @@ layout: home
       </ul>
     </div>
   </div>
-</div>
-<div class="container centered">
-  <img src="/img/seperator.png" />
 </div>

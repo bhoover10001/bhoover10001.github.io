@@ -1,0 +1,8 @@
+{% if page.vocabulary %}
+  <vocabulary>
+    <h2>Vocabulary</h2>
+    {% for vocabulary in page.vocabulary %}
+      <term>{{ vocabulary.term }}</term><definition>{{ vocabulary.definition }} </definition>
+    {% endfor %}
+  </vocabulary>
+{% endif %}
