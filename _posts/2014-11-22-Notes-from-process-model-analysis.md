@@ -13,12 +13,14 @@ vocabulary:
   - term: safe
     definition: A place (p) is safe if it is 1-bounded.
                 A petri net is safe if all the places are 1-bounded
-    term: Workflow Nets
+  - term: Workflow Nets
     definition: 
-    term: Source Place
+  - term: Source Place
     definition: For a Workflow net, this is is the start or i.
-    term: Sink place
+  - term: Sink place
     definition: For a Workflow net, this is the end or o
+  - term: marking
+    definition: A state in a Petri net
     
 ---
 <h2>
@@ -126,6 +128,19 @@ Consist of a case ID, activity name, time stamp, plus other data.
     <li>Causality: x \(\rightarrow \)  y - if x&gt;y but not y&gt;x</li>
     <li>Parallel: X||y iff x&gt;y and y&gt;x</li>
     <li>Choice: x#y iff not x&gt;y and not y&gt;x</li>
+  </ul>
+</p>
+<p>
+  An alpha network can discover choices, concurrency, loops.  But it cannot cover all situations.  Limitations:<br />
+  <ul>
+    <li>Implicit places - A place that doesn't add anything.  What does this mean</li>
+    <li>Loops of length 1 and length 2</li>
+    <li>\( \tau \) represents a transition that doesn't have an event. </li>
+    <li>The resultant model might not be a sound WF-net.</li>
+    <li>representative bias</li>
+    <li>Noise can really affect the model, rare events will muck up the model, because there is no determiniation of how many times 
+      an trace has happened</li>
+    <li>Completeness</li>
   </ul>
 </p>
 <div id="pn" class="content-container">
