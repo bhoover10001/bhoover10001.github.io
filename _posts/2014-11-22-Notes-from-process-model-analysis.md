@@ -4,7 +4,7 @@ title: Process Model Analysis Week 2
 date: 11-Nov-2014
 vocabulary:
   - term: Petri-Net
-    definition: A network of something
+    definition: One version of a way to document a process model
   - term: control-flow 
     definition: Something moving from here to there
   - term: k-bounded
