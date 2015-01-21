@@ -912,3 +912,26 @@ vocabulary definition {
   src: url('../fonts/1942-webfont.eot');
   src: url('../fonts/1942-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/1942-webfont.woff') format('woff'), url('../fonts/1942-webfont.ttf') format('truetype'), url('../fonts/1942-webfont.svg#glyphicons-halflingsregular') format('svg');
 }
+
+.axisLabel {
+  position: absolute;
+  font-size: 12px;
+  text-align: center;
+}
+
+.xaxisLabel {
+  right: 0;
+  bottom: -10px;
+  left: 0;
+}
+
+.yaxisLabel {
+  top: 50%;
+  left: 2px;
+  margin-left: -60px;
+  -webkit-transform: rotate(-90deg);
+     -moz-transform: rotate(-90deg);
+      -ms-transform: rotate(-90deg);
+       -o-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+}

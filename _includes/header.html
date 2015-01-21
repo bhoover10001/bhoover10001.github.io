@@ -23,13 +23,26 @@
 <![endif]-->
 
 <!-- Favicons -->
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ page.base_url }}assets/ico/apple-touch-icon-144-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ page.base_url }}assets/ico/apple-touch-icon-114-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ page.base_url }}assets/ico/apple-touch-icon-72-precomposed.png">
-<link rel="apple-touch-icon-precomposed" href="{{ page.base_url }}assets/ico/apple-touch-icon-57-precomposed.png">
-<link rel="shortcut icon" href="{{ page.base_url }}assets/ico/favicon.png">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ page.base_url }}/assets/ico/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ page.base_url }}/assets/ico/apple-touch-icon-114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ page.base_url }}/assets/ico/apple-touch-icon-72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="{{ page.base_url }}/assets/ico/apple-touch-icon-57-precomposed.png">
+<link rel="shortcut icon" href="{{ page.base_url }}/assets/ico/favicon.png">
 
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js"></script>
 <script type="text/javascript"
     src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
 </script>
 
+<style>
+// this breaks grunt less 
+.yaxisLabel {
+  transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
+}
+
+</style>
