@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Image Processing and the Canvas
+date: 20-Jan-2015
 ---
 
 This is a quick little utility for getting the color distribution for an image.  The image has to 

@@ -36,7 +36,7 @@ My cat - the Tigress.
   }
 
   function convertToGreyScale(map) {
-     var pixels = map.data;
+    var pixels = map.data;
     var red, green, blue, grey;
     for (var i = 0, n = pixels.length; i < n; i += 4) {
       red = pixels[i];
