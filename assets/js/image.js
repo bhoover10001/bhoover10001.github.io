@@ -76,6 +76,5 @@ function calculateEqualization(greyScalePixels, numPixels) {
     cdf += greyScalePixels[i];
     p[i] = Math.floor(((cdf - greyScalePixels[minValue]) * (maxValue - minValue)) / (numPixels - greyScalePixels[minValue]));
   }
-  console.log(p);
   return p;
 }
