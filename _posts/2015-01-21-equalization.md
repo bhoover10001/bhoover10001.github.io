@@ -5,7 +5,7 @@ date: 21-Jan-2015
 ---
 
 Let's play around with equalization.  This takes a little more work.  First we have to get the grey scale and the equalization lookup
-table.  Once we've done that, it's just about going pixel by pixel and transformming the image to spread out the distribution.
+table.  Once we've done that, it's just about going pixel by pixel and transforming the image to spread out the distribution.
 
 I found out that my cat's picture wasn't a really good start for this, because the image already was pretty well distributed.
 
@@ -41,22 +41,9 @@ function calculateEqualization(greyScalePixels, numPixels) {
   var cdf = 0;
   var p = [];
   var minValue = 0;
-  for (var i = 0; i < 256; i+= 1) {
-    if (greyScalePixels[i] > 0) {
-      minValue = i;
-      break;
-    }
-  }
-  var maxValue = 0;
-  for (var i = 255; i > 0; i -= 1) {
-    if (greyScalePixels[i] > 0) {
-      maxValue = i;
-      break;
-    }
-  }
   for (var i = 0; i <= 256; i+= 1) {
     cdf += greyScalePixels[i];
-    p[i] = Math.floor(cdf * 255 / numPixels);
+    p[i] = Math.floor((cdf - greyScalePixels[0]) * 255 / (numPixels- greyScalePixels[0]));
   }
   return p;
 }
