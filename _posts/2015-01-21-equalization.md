@@ -4,12 +4,15 @@ title: Greyscale Equalization
 date: 21-Jan-2015
 ---
 
-Let's play around with equalization.  This takes a little more work.  First we have to get the grey scale 
+Let's play around with equalization.  This takes a little more work.  First we have to get the grey scale and the equalization lookup
+table.  Once we've done that, it's just about going pixel by pixel and transformming the image to spread out the distribution.
+
+I found out that my cat's picture wasn't a really good start for this, because the image already was pretty well distributed.
 
 
 <canvas id="greyScale" />
 <div>
-My cat - the Tigress.
+
 </div>
 
 <canvas id="equalizedCanvas" />
@@ -51,9 +54,9 @@ function calculateEqualization(greyScalePixels, numPixels) {
       break;
     }
   }
-  for (var i = minValue; i <= maxValue; i+= 1) {
+  for (var i = 0; i <= 256; i+= 1) {
     cdf += greyScalePixels[i];
-    p[i] = Math.floor(((cdf - greyScalePixels[minValue]) * (maxValue - minValue)) / (numPixels - greyScalePixels[minValue]));
+    p[i] = Math.floor(cdf * 255 / numPixels);
   }
   return p;
 }
@@ -76,7 +79,7 @@ function calculateEqualization(greyScalePixels, numPixels) {
     plot(originalImageHistogram.grey, equalizedImageHistogram.grey);
   }, false);
   
-  img.src = '{{ page.base_url }}/img/Ferocious_Tammy.png'; // Set source path
+  img.src = '{{ page.base_url }}/img/LenaDark.png'; // Set source path
   
     function plot(origianlGrey, equalizedGrey) {
      var greyPlot = [];

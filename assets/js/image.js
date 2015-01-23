@@ -72,9 +72,9 @@ function calculateEqualization(greyScalePixels, numPixels) {
       break;
     }
   }
-  for (var i = minValue; i <= maxValue; i+= 1) {
+  for (var i = 0; i <= 256; i+= 1) {
     cdf += greyScalePixels[i];
-    p[i] = Math.floor(((cdf - greyScalePixels[minValue]) * (maxValue - minValue)) / (numPixels - greyScalePixels[minValue]));
+    p[i] = Math.floor(cdf * 255 / numPixels);
   }
   return p;
 }
