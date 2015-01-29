@@ -65,3 +65,27 @@ function calculateEqualization(greyScalePixels, numPixels) {
   }
   return p;
 }
+
+function localMeansGreyScale(canvas, blockSize) {
+  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
+  var pixels = map.data;
+  var window = Math.floor(blockSize /2);
+  for (var y = 0; y < canvas.height; y += 1) {
+    for (var x = 0; x < canvas.width; x += 1) {
+      var startY = Math.max(0, y - window);
+      var startX = Math.max(0, x - window);
+      var endY = Math.min(canvas.height, y + window);
+      var endX = Math.min(canvas.width, x + window);
+      var greyScaleAverage = 0;
+      for (var y1 = startY; y1 < endY; y1 += 1) {
+         for (var x1 = startX; x1 < endX; x1 +=1) {
+           greyScaleAverage += pixels[(y1 * canvas.width * 4) + x1 * 4];
+         }
+      }
+      greyScaleAverage = greyScaleAverage / ((endX - startX) * (endY - startY));
+      var currentRedPixel = (y * canvas.width * 4) + x * 4;
+      pixels[currentRedPixel] = pixels[currentRedPixel + 1] = pixels[currentRedPixel + 2] = greyScaleAverage;
+    }
+  }
+  getContext(canvas).putImageData(map, 0, 0);
+}

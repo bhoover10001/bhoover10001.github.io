@@ -11,15 +11,13 @@ I found out that my cat's picture wasn't a really good start for this, because t
 
 
 <canvas id="greyScale" />
-<div>
-
-</div>
 
 <canvas id="equalizedCanvas" />
 
 <div id="histogram" style="width:100%; height:400px;">
 </div>
 
+<br />
 {% highlight JavaScript %}
 function equalizeGreyScale(canvas) {
   var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
