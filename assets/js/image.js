@@ -58,7 +58,6 @@ function equalizeGreyScale(canvas) {
 function calculateEqualization(greyScalePixels, numPixels) {
   var cdf = 0;
   var p = [];
-  console.log(numPixels)
   for (var i = 0; i < 256; i+= 1) {
     cdf += greyScalePixels[i];
     p[i] = Math.floor((cdf - greyScalePixels[0]) * 255 / (numPixels- greyScalePixels[0]));
@@ -68,60 +67,80 @@ function calculateEqualization(greyScalePixels, numPixels) {
 
 function localMeansGreyScale(canvas, blockSize) {
   var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  var pixels = map.data;
-  var window = Math.floor(blockSize /2);
-  if (blockSize > 1) {
-    for (var y = 0; y < canvas.height; y += 1) {
-      for (var x = 0; x < canvas.width; x += 1) {
-        var startY = Math.max(0, y - window);
-        var startX = Math.max(0, x - window);
-        var endY = Math.min(canvas.height -1, y + window);
-        var endX = Math.min(canvas.width -1, x + window);
-        var greyScalePixels = [];
-        for (var y1 = startY; y1 <= endY; y1 += 1) {
-           for (var x1 = startX; x1 <= endX; x1 +=1) {
-             greyScalePixels.push(pixels[(y1 * canvas.width * 4) + x1 * 4]);
-           }
-        }
-        setGreyPixels(pixels, currentPixelArrayLocation(y, x, canvas.width), mean(greyScalePixels));
-      }
-    }
-  }
+  greyScaleFilter(map.data, canvas.height, canvas.width, blockSize, mean);
   getContext(canvas).putImageData(map, 0, 0);
 }
 
 function medianFilterGreyScale(canvas) {
   var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  var pixels = map.data;
-  var window = 1;
-  for (var y = 0; y < canvas.height; y += 1) {
-    for (var x = 0; x < canvas.width; x += 1) {
+  greyScaleFilter(map.data, canvas.height, canvas.width, 3, median);
+  getContext(canvas).putImageData(map, 0, 0);
+}
+
+function laPlaceFilterGreyScale(canvas) {
+  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
+  greyScaleFilter(map.data, canvas.height, canvas.width, 3, laPlace);
+  getContext(canvas).putImageData(map, 0, 0);
+}
+
+function sharpenFilterGreyScale(canvas) {
+  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
+  greyScaleFilter(map.data, canvas.height, canvas.width, 3, sharpen);
+  getContext(canvas).putImageData(map, 0, 0);
+}
+
+function greyScaleFilter(data, canvas_height, canvas_width, windowWidth, filterFunction) {
+  var window = Math.floor(windowWidth/ 2);
+  var localData = makeDefensiveCopy(data);
+  if (window <= 0) {
+    return;
+  }
+  for (var y = 0; y < canvas_height; y += 1) {
+    for (var x = 0; x < canvas_width; x += 1) {
       var startY = Math.max(0, y - window);
       var startX = Math.max(0, x - window);
-      var endY = Math.min(canvas.height -1, y + window);
-      var endX = Math.min(canvas.width -1, x + window);
+      var endY = Math.min(canvas_height -1, y + window);
+      var endX = Math.min(canvas_width -1, x + window);
       var greyScalePixels = [];
       for (var y1 = startY; y1 <= endY; y1 += 1) {
-         for (var x1 = startX; x1 <= endX; x1 +=1) {
-           greyScalePixels.push(pixels[(y1 * canvas.width * 4) + x1 * 4]);
-         }
+        for (var x1 = startX; x1 <= endX; x1 +=1) {
+          var location = (y1 * canvas_width * 4) + x1 * 4;
+          greyScalePixels.push(localData[location]);
+        }
       }
-      setGreyPixels(pixels, currentPixelArrayLocation(y, x, canvas.width), median(greyScalePixels));
+      setGreyPixels(data, currentPixelArrayLocation(y, x, canvas_width), filterFunction(greyScalePixels));
     }
   }
-  getContext(canvas).putImageData(map, 0, 0);
+};
+
+function makeDefensiveCopy(data) {
+  return JSON.parse(JSON.stringify(data))
 }
 
 function setGreyPixels(pixels, arrayLocation, value) {
   pixels[arrayLocation] = pixels[arrayLocation + 1] = pixels[arrayLocation + 2] = value;
 }
 
-function mean(pixelArray) {
+/**
+ * Assumes the passed in pixel array is 9 long.
+ */
+var laPlace = function(pixelArray) {
+  return pixelArray[1] + pixelArray[3] + pixelArray[5] + pixelArray[7] - 4 * pixelArray[4];
+}
+
+/**
+ * Assumes the passed in pixel array is 9 long.
+ */
+var sharpen = function(pixelArray) {
+  return 5*pixelArray[4] - pixelArray[1] - pixelArray[3] - pixelArray[5] - pixelArray[7];
+}
+
+var mean = function(pixelArray) {
   var total = pixelArray.reduce(function(a,b) {return a+b});
   return Math.floor(total/pixelArray.length);
 }
 
-function median(pixelArray) {
+var median = function(pixelArray) {
   pixelArray.sort(function(a,b) {return a - b;});
   var half = Math.floor(pixelArray.length/2);
   if (pixelArray.length % 2) {
