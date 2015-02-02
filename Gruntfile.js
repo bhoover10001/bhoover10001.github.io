@@ -28,10 +28,10 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       src: {
-        src: ['js/*.js']
+        src: ['js/*.js', 'app/*.js']
       },
       test: {
-        src: ['js/tests/unit/*.js']
+        src: ['js/tests/unit/*.js', 'app/tests/unit/*.js']
       }
     },
 
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
       options: {
         inject: 'js/tests/unit/phantom.js'
       },
-      files: ['js/tests/*.html']
+      files: ['js/tests/*.html','app/tests/*.html']
     },
 
     connect: {

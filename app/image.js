@@ -111,10 +111,10 @@ function greyScaleFilter(data, canvas_height, canvas_width, windowWidth, filterF
       setGreyPixels(data, currentPixelArrayLocation(y, x, canvas_width), filterFunction(greyScalePixels));
     }
   }
-};
+}
 
 function makeDefensiveCopy(data) {
-  return JSON.parse(JSON.stringify(data))
+  return JSON.parse(JSON.stringify(data));
 }
 
 function setGreyPixels(pixels, arrayLocation, value) {
@@ -125,7 +125,7 @@ function setGreyPixels(pixels, arrayLocation, value) {
  * Assumes the passed in pixel array is 9 long.
  */
 var laPlace = function(pixelArray) {
-  return pixelArray[1] + pixelArray[3] + pixelArray[5] + pixelArray[7] - 4 * pixelArray[4];
+  return pixelArray[1] + pixelArray[3] + pixelArray[5] + pixelArray[7] - 4 * pixelArray[4]
 }
 
 /**
@@ -174,4 +174,26 @@ function greyScaleWhiteNoiseGenerator(canvas, density) {
 
 function currentPixelArrayLocation(y, x, imageWidth) {
   return (y * imageWidth * 4) + x * 4;
+}
+
+var PixelData = function(red, green, blue, alpha) {
+  this.red = red;
+  this.green = green;
+  this.blue = blue;
+  this.alpha = alpha;
+}
+
+PixelData.prototype.convertToHSL = function() {
+  this.hue = this.red + this.green + this.blue;
+  this.saturation = this.red + this.green + this.blue;
+  this.level = this.red + this.green + this.blue;
+}
+
+function convertToPixelData(data) {
+  var pixelArray = [];
+  var len = data.length;
+  for (var i = 0; i < len; i += 4) {
+    pixelArray.push(new PixelData(data[i], data[i+1], data[i+3], data[i+4]));
+  }
+  return pixelArray;
 }

@@ -65,7 +65,7 @@ function mean(pixelArray) {
     setToCanvas(img, laPlaceFilterCanvas);
     convertToGreyScale(laPlaceFilterCanvas);
     laPlaceFilterGreyScale(laPlaceFilterCanvas);
-    equalizeGreyScale(laPlaceFilterCanvas);
+     equalizeGreyScale(laPlaceFilterCanvas);
     setToCanvas(img, sharpenedCanvas);
     convertToGreyScale(sharpenedCanvas);
     sharpenFilterGreyScale(sharpenedCanvas);

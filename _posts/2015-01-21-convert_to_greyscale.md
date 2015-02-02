@@ -30,7 +30,6 @@ function convertToGreyScale(canvas) {
 }
 {% endhighlight %}
 
-<script src="{{ page.base_url }}/assets/js/image.js"></script>
 <script>
   var img = new Image();   // Create new img element
   var canvas = document.getElementById('imageProcessing');

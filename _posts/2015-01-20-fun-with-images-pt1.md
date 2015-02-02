@@ -36,7 +36,6 @@ function calculateHistogram(canvas) {
   return {red: red, green: green, blue: blue, grey: grey, alpha: alpha};
 }
 {% endhighlight %}
-<script src="{{ page.base_url }}/assets/js/image.js"></script>
 <script>
   var img = new Image();   // Create new img element
   var canvas = document.getElementById("imageProcessing");

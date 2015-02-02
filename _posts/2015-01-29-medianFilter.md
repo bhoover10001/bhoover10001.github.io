@@ -63,7 +63,6 @@ function mean(pixelArray) {
 }
 {% endhighlight %}
 
-<script src="{{ page.base_url }}/assets/js/image.js"></script>
 <script>
   var img = new Image();   // Create new img element
   var originalCanvas = document.getElementById('original');
