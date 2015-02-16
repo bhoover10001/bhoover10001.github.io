@@ -1,58 +1,13 @@
-function setToCanvas(image, canvas) {
-  canvas.width = image.naturalWidth;
-  canvas.height = image.naturalHeight;
-  getContext(canvas).drawImage(image, 0, 0);
-}
+var workersCount = 4;
 
-function calculateHistogram(canvas) {
-  var pixels = getContext(canvas).getImageData(0,0, canvas.width, canvas.height).data
-  var red = new Uint32Array(256);
-  var green = new Uint32Array(256);
-  var blue = new Uint32Array(256);
-  var alpha = new Uint32Array(256);
-  var grey = new Uint32Array(256);
-  for (var i = 0, n = pixels.length; i < n; i += 4) {
-    red[pixels[i]] +=1;
-    green[pixels[i+1]] +=1;
-    blue[pixels[i+2]] +=1;
-    alpha[pixels[i+3]] += 1;
-    grey[Math.floor((pixels[i] + pixels[i+1] + pixels[i+2]) /3)] += 1;
-  }
-  return {red: red, green: green, blue: blue, grey: grey, alpha: alpha};
+function drawToCanvas(imageData, canvas) {
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+  getContext(canvas).putImageData(imageData, 0, 0);
 }
 
 function getContext(canvas) {
-	return canvas.getContext('2d');
-}
-
-function convertToGreyScale(canvas) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  var pixels = map.data;
-  var red, green, blue, grey;
-  for (var i = 0, n = pixels.length; i < n; i += 4) {
-    red = pixels[i];
-    green = pixels[i+1];
-    blue = pixels[i+2];
-    grey = Math.floor((red + green + blue) /3);
-    pixels[i] = pixels[i + 1] = pixels[i + 2] = grey;
-  }
-  getContext(canvas).putImageData(map, 0, 0);
-}
-
-function equalizeGreyScale(canvas) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  var pixels = map.data;
-  var greyScalePixels = calculateHistogram(canvas).grey;
-  var numPixels = canvas.width * canvas.height;
-  var conversion = calculateEqualization(greyScalePixels, numPixels);
-  for (var i = 0, n = pixels.length; i < n; i += 4) {
-    red = pixels[i];
-    green = pixels[i+1];
-    blue = pixels[i+2];
-    grey = Math.floor((red + green + blue) /3);
-    pixels[i] = pixels[i + 1] = pixels[i + 2] = conversion[grey];
-  }
-  getContext(canvas).putImageData(map, 0, 0);
+  return canvas.getContext('2d');
 }
 
 function calculateEqualization(greyScalePixels, numPixels) {
@@ -65,135 +20,250 @@ function calculateEqualization(greyScalePixels, numPixels) {
   return p;
 }
 
-function localMeansGreyScale(canvas, blockSize) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  greyScaleFilter(map.data, canvas.height, canvas.width, blockSize, mean);
-  getContext(canvas).putImageData(map, 0, 0);
+
+function guassian_seed() {
+  return (Math.random() * 2 - 1) + (Math.random() * 2 - 1) + (Math.random() * 2 - 1);
 }
 
-function medianFilterGreyScale(canvas) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  greyScaleFilter(map.data, canvas.height, canvas.width, 3, median);
-  getContext(canvas).putImageData(map, 0, 0);
+function rnd(mean, stdDev) {
+  return Math.round(guassian_seed() * stdDev + mean);
 }
 
-function laPlaceFilterGreyScale(canvas) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  greyScaleFilter(map.data, canvas.height, canvas.width, 3, laPlace);
-  getContext(canvas).putImageData(map, 0, 0);
+Filters = {};
+
+Filters.getPixels = function(img) {
+  var c = this.getCanvas(img.width, img.height);
+  var ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0,0,c.width, c.height);
 }
 
-function sharpenFilterGreyScale(canvas) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  greyScaleFilter(map.data, canvas.height, canvas.width, 3, sharpen);
-  getContext(canvas).putImageData(map, 0, 0);
+Filters.getCanvas = function(w, h) {
+  var c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  return c;
 }
 
-function greyScaleFilter(data, canvas_height, canvas_width, windowWidth, filterFunction) {
-  var window = Math.floor(windowWidth/ 2);
-  var localData = makeDefensiveCopy(data);
-  if (window <= 0) {
-    return;
+Filters.copyPixels = function(img) {
+  var c = this.getCanvas(img.width, img.height);
+  var ctx = c.getContext('2d');
+  ctx.putImageData(img, 0, 0);
+  return ctx.getImageData(0,0,c.width, c.height);
+}
+
+
+Filters.filterImage = function(filter, image, var_args) {
+  var args = [this.getPixels(image)];
+  for (var i = 2; i < arguments.length; i++) {
+    args.push(arguments[i]);
   }
-  for (var y = 0; y < canvas_height; y += 1) {
-    for (var x = 0; x < canvas_width; x += 1) {
-      var startY = Math.max(0, y - window);
-      var startX = Math.max(0, x - window);
-      var endY = Math.min(canvas_height -1, y + window);
-      var endX = Math.min(canvas_width -1, x + window);
-      var greyScalePixels = [];
-      for (var y1 = startY; y1 <= endY; y1 += 1) {
-        for (var x1 = startX; x1 <= endX; x1 +=1) {
-          var location = (y1 * canvas_width * 4) + x1 * 4;
-          greyScalePixels.push(localData[location]);
-        }
+  return filter.apply(null, args);
+}
+
+Filters.greyscale = function(pixels, args) {
+  var red = parseFloat(args[0]);
+  var green = parseFloat(args[1]);
+  var blue = parseFloat(args[2]);
+  var total = red + green + blue;
+  red /= total;
+  green /= total;
+  blue /= total;
+  var d = pixels.data;
+  var numPixels = d.length;
+  var r,g,b,v;
+  for (var i = 0; i < numPixels; i+= 4) {
+    r = d[i];
+    g = d[i+1];
+    b = d[i+2];
+    v = Math.floor(red*r + green*g + blue*b);
+    d[i] = d[i+1] = d[i+2] = v;
+  }
+  return pixels;
+}
+
+/**
+ * puts the same noise on each of the pixels.  This is mostly for the case where the 
+ * image is already a grey scale.
+ */
+Filters.greyscaleguassiannoise = function(pixels, mean, stdev) {
+  var d = pixels.data;
+  var numPixels = d.length;
+  var r,g,b,noise;
+  for (var i = 0; i < numPixels; i+= 4) {
+   noise = rnd( mean, stdev);
+   d[i] += noise;
+   d[i+1] += noise;
+   d[i+2] += noise;
+  }
+  return pixels;
+}
+
+/**
+ * covers the image with white noise.  The chances of a pixel having white noise is the density, which is a number from 0 to 1.
+ * args.noiseDensity, from 0...1;
+ * args.minValue; 
+ * args.maxValue;
+ */
+Filters.whitenoise = function(pixels, args) {
+  var density = args.noiseDensity;
+  var minVal = args.minVal;
+  var maxVal = args.maxVal;
+  var d = pixels.data;
+  var numPixels = d.length;
+  var r,g,b,noise;
+  var noiseWidth = maxVal - minVal;
+  for (var i = 0; i < numPixels; i+= 4) {
+   for (var j = 0; j < 3; j++) {
+     if (Math.random() < density) {
+       d[i + j] += Math.random()*noiseWidth + minVal;
+     }
+   }
+  }
+  return pixels;
+}
+
+/**
+ * Computes the histogram, returning a struct with Red, Green, Blue and Grey.  The
+ * grey scale balance is set from the arguments.
+ */
+Filters.histogram = function(pixels, args) {
+  var red = parseFloat(args[0]);
+  var green = parseFloat(args[1]);
+  var blue = parseFloat(args[2]);
+  var total = red + green + blue;
+  red /= total;
+  green /= total;
+  blue /= total;
+  var d = pixels.data;
+  var redArray = new Uint32Array(256);
+  var greenArray = new Uint32Array(256);
+  var blueArray = new Uint32Array(256);
+  var greyArray = new Uint32Array(256);
+  var numPixels = d.length;
+  for (var i = 0; i < numPixels; i+= 4) {
+    redArray[d[i]] ++;
+    greenArray[d[i+1]] ++;
+    blueArray[d[i+2]] ++;
+    greyArray[Math.floor(red*d[i] + green*d[i+1] + blue*d[i+2])] ++;
+  }
+  return {red: redArray, green: greenArray, blue: blueArray, grey: greyArray};
+}
+
+Filters.equalizeGreyScale = function(pixels, args) {
+  var greyScaleImgData = Filters.greyscale(pixels, [0.2126, 0.7152, 0.0722]);
+  var d = pixels.data;
+  var numPixels = d.length;
+  var greyDistribution = Filters.histogram(greyScaleImgData, [0.2126, 0.7152, 0.0722]).grey;
+  var equalizationTable = calculateEqualization(greyDistribution, numPixels / 4);
+  for (var i = 0, n = d.length; i < n; i += 4) {
+    d[i] = d[i + 1] = d[i + 2] = equalizationTable[d[i]];
+  }
+  return pixels;
+}
+
+Filters.meansFilter = function(pixels, args) {
+  var filter = [];
+  var filterSize = args.windowSize;
+  var numElements = Math.pow(filterSize,2)
+  for (y = 0; y < numElements; y ++) {
+    filter[y] = 1;
+  }
+  return convolve(filter, pixels)
+}
+
+Filters.sharpen = function(pixels, args) {
+//  var filter = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+  var filter = [0, -9, 0, -9, 45, -9, 0, -9, 0];
+  return convolve(filter, pixels)
+}
+
+Filters.laPlace = function(pixels, args) {
+  var filter = [0, 9, 0, 9, -36, 9, 0, 9, 0];
+  return convolve(filter, pixels)
+}
+
+Filters.medianFilter = function(pixels) {
+  var promise = $.Deferred();
+  var height = pixels.height;
+  var width = pixels.width;
+  var window = 3;
+  var windowSize = Math.pow(window, 2);
+  var redPixels, bluePixels,greenPixels;
+  var d = pixels.data;
+  var resultCanvasContext = Filters.getCanvas(pixels.width, pixels.height).getContext('2d');
+  var blockSize = Math.ceil(pixels.height / workersCount);
+  var finished = 0;
+  var onWorkEnded = function (e) {
+      var canvasData = e.data.result;
+      var index = e.data.index;
+      resultCanvasContext.putImageData(canvasData, 0, blockSize * index );
+      finished++;
+      if (finished == workersCount) {
+        promise.resolve(resultCanvasContext.getImageData(0,0, pixels.width, pixels.height));
       }
-      setGreyPixels(data, currentPixelArrayLocation(y, x, canvas_width), filterFunction(greyScalePixels));
+  };
+  var remainingPixels = pixels.height;
+  var tempContext = Filters.getCanvas(pixels.width, pixels.height).getContext("2d");
+  tempContext.putImageData(pixels, 0, 0);
+  var tempCanvasData = tempContext.createImageData(pixels.width, blockSize);
+  for (var index = 0; index < workersCount; index++) {
+    var worker = createWorker("/app/medianWorker.js");
+    worker.onmessage = onWorkEnded;
+    var startY = Math.max(0, blockSize * index);
+    var blockHeight = blockSize;
+    if (index === workersCount - 1) {
+      blockHeight = remainingPixels;
     }
+    var canvasData = tempContext.getImageData(0, startY, pixels.width, blockHeight);
+    worker.postMessage({ canvasData: canvasData, tempCanvasData: tempCanvasData, index: index});
+    remainingPixels -= blockSize;
   }
+  return promise;
 }
 
-function makeDefensiveCopy(data) {
-  return JSON.parse(JSON.stringify(data));
-}
 
-function setGreyPixels(pixels, arrayLocation, value) {
-  pixels[arrayLocation] = pixels[arrayLocation + 1] = pixels[arrayLocation + 2] = value;
-}
-
-/**
- * Assumes the passed in pixel array is 9 long.
- */
-var laPlace = function(pixelArray) {
-  return pixelArray[1] + pixelArray[3] + pixelArray[5] + pixelArray[7] - 4 * pixelArray[4]
-}
-
-/**
- * Assumes the passed in pixel array is 9 long.
- */
-var sharpen = function(pixelArray) {
-  return 5*pixelArray[4] - pixelArray[1] - pixelArray[3] - pixelArray[5] - pixelArray[7];
-}
-
-var mean = function(pixelArray) {
-  var total = pixelArray.reduce(function(a,b) {return a+b});
-  return Math.floor(total/pixelArray.length);
-}
-
-var median = function(pixelArray) {
-  pixelArray.sort(function(a,b) {return a - b;});
-  var half = Math.floor(pixelArray.length/2);
-  if (pixelArray.length % 2) {
-    return pixelArray[half];
-  }
-  return pixelArray[half-1];
-}
-
-/**
- * Generates a random noise, with a density, that really the probability that any 
- * pixel is noisy.  This adds the exact same noise to all the RGB channels, hence the "greyScale" label.
- * Density should be between 0 and 1.
- * @param canvas
- * @param density
- */
-function greyScaleWhiteNoiseGenerator(canvas, density) {
-  var map = getContext(canvas).getImageData(0,0, canvas.width, canvas.height);
-  var pixels = map.data;
-  for (var y = 0; y < canvas.height; y += 1) {
-    for (var x = 0; x < canvas.width; x += 1) {
-      if (Math.random() > density) {
-        continue;
+function convolve(filter, pixels) {
+  var promise = $.Deferred();
+  var filterSize = Math.sqrt(filter.length);
+  var windowOffset = Math.ceil(filterSize /2);
+  var len = pixels.width * pixels.height * 4;
+  var finished = 0;
+  var segmentLength = len / workersCount;
+  var blockSize = Math.ceil(pixels.height / workersCount);
+  var resultCanvas = Filters.getCanvas(pixels.width, pixels.height);
+  var resultContext = resultCanvas.getContext('2d');
+  var onWorkEnded = function (e) {
+      var canvasData = e.data.result;
+      var index = e.data.index;
+      resultContext.putImageData(canvasData, 0, blockSize * index );
+      finished++;
+      if (finished == workersCount) {
+        promise.resolve(resultContext.getImageData(0,0, pixels.width, pixels.height));
       }
-      var noise = Math.floor(Math.random() * 256);
-      var currentRedPixel = currentPixelArrayLocation(y, x, canvas.width);
-      pixels[currentRedPixel] = pixels[currentRedPixel + 1] = pixels[currentRedPixel + 2] = (pixels[currentRedPixel] + noise) % 256;
+  };
+  var tempContext = Filters.getCanvas(pixels.width, pixels.height).getContext("2d");
+  tempContext.putImageData(pixels, 0, 0);
+  var tempCanvasData = tempContext.createImageData(pixels.width, blockSize);
+  var remainingPixels = pixels.height;
+  for (var index = 0; index < workersCount; index++) {
+    var worker = createWorker("/app/convolutionWorker.js");
+    worker.onmessage = onWorkEnded;
+    var startY = Math.max(0, blockSize * index - windowOffset);
+    var blockHeight = blockSize + filterSize;
+    if (index === workersCount - 1) {
+      blockHeight = remainingPixels;
     }
+    var canvasData = tempContext.getImageData(0, startY, pixels.width, blockHeight);
+    if (startY !== 0) {
+      startY = windowOffset;
+    }
+    worker.postMessage({ canvasData: canvasData, tempCanvasData: tempCanvasData, index: index, length: segmentLength, filter: filter, startY: startY });
+    remainingPixels -= blockSize;
   }
-  getContext(canvas).putImageData(map, 0, 0);
+  return promise;
 }
 
-function currentPixelArrayLocation(y, x, imageWidth) {
-  return (y * imageWidth * 4) + x * 4;
-}
-
-var PixelData = function(red, green, blue, alpha) {
-  this.red = red;
-  this.green = green;
-  this.blue = blue;
-  this.alpha = alpha;
-}
-
-PixelData.prototype.convertToHSL = function() {
-  this.hue = this.red + this.green + this.blue;
-  this.saturation = this.red + this.green + this.blue;
-  this.level = this.red + this.green + this.blue;
-}
-
-function convertToPixelData(data) {
-  var pixelArray = [];
-  var len = data.length;
-  for (var i = 0; i < len; i += 4) {
-    pixelArray.push(new PixelData(data[i], data[i+1], data[i+3], data[i+4]));
-  }
-  return pixelArray;
+function createWorker(workerScript) {
+  return new Worker(workerScript);
 }

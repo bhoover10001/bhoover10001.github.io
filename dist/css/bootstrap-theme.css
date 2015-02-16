@@ -360,6 +360,14 @@ form .row:first-child .floating-label-form-group {
   border-top: 1px solid #999999;
 }
 
+.slider-group label {
+  display: block;
+}
+
+.slider-group label :after {
+  content: ":";
+}
+
 .btn {
   padding: 15px 25px;
   font-family: 'Carrois Gothic', 'Helvetica Neue', Helvetica, Arial, sans-serif;

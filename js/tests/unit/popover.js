@@ -37,7 +37,7 @@ $(function () {
         ok(!!popover.data('bs.popover'), 'popover instance exists')
       })
 
-      test("should get title and content from options", function () {
+      test("should get title and content from options", function (assert) {
         $.support.transition = false
         var popover = $('<a href="#">@fat</a>')
           .appendTo('#qunit-fixture')
@@ -53,15 +53,15 @@ $(function () {
         popover.popover('show')
 
         ok($('.popover').length, 'popover was inserted')
-        equals($('.popover .popover-title').text(), '@fat', 'title correctly inserted')
-        equals($('.popover .popover-content').text(), 'loves writing tests （╯°□°）╯︵ ┻━┻', 'content correctly inserted')
+        assert.equal($('.popover .popover-title').text(), '@fat', 'title correctly inserted')
+        assert.equal($('.popover .popover-content').text(), 'loves writing tests （╯°□°）╯︵ ┻━┻', 'content correctly inserted')
 
         popover.popover('hide')
         ok(!$('.popover').length, 'popover was removed')
         $('#qunit-fixture').empty()
       })
 
-      test("should get title and content from attributes", function () {
+      test("should get title and content from attributes", function (assert) {
         $.support.transition = false
         var popover = $('<a href="#" title="@mdo" data-content="loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻" >@mdo</a>')
           .appendTo('#qunit-fixture')
@@ -69,8 +69,8 @@ $(function () {
           .popover('show')
 
         ok($('.popover').length, 'popover was inserted')
-        equals($('.popover .popover-title').text(), '@mdo', 'title correctly inserted')
-        equals($('.popover .popover-content').text(), "loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻", 'content correctly inserted')
+        assert.equal($('.popover .popover-title').text(), '@mdo', 'title correctly inserted')
+        assert.equal($('.popover .popover-content').text(), "loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻", 'content correctly inserted')
 
         popover.popover('hide')
         ok(!$('.popover').length, 'popover was removed')
@@ -78,7 +78,7 @@ $(function () {
       })
 
 
-      test("should get title and content from attributes #2", function () {
+      test("should get title and content from attributes #2", function (assert) {
         $.support.transition = false
         var popover = $('<a href="#" title="@mdo" data-content="loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻" >@mdo</a>')
           .appendTo('#qunit-fixture')
@@ -89,8 +89,8 @@ $(function () {
           .popover('show')
 
         ok($('.popover').length, 'popover was inserted')
-        equals($('.popover .popover-title').text(), '@mdo', 'title correctly inserted')
-        equals($('.popover .popover-content').text(), "loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻", 'content correctly inserted')
+        assert.equal($('.popover .popover-title').text(), '@mdo', 'title correctly inserted')
+        assert.equal($('.popover .popover-content').text(), "loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻", 'content correctly inserted')
 
         popover.popover('hide')
         ok(!$('.popover').length, 'popover was removed')

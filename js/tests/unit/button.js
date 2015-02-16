@@ -16,36 +16,34 @@ $(function () {
         ok($(document.body).button()[0] == document.body, 'document.body returned')
       })
 
-      test("should return set state to loading", function () {
+      test("should return set state to loading", function ( assert ) {
+        var done = assert.async();
         var btn = $('<button class="btn" data-loading-text="fat">mdo</button>')
-        equals(btn.html(), 'mdo', 'btn text equals mdo')
+        assert.equal(btn.html(), 'mdo', 'btn text equals mdo')
         btn.button('loading')
-        equals(btn.html(), 'fat', 'btn text equals fat')
-        stop()
+        assert.equal(btn.html(), 'fat', 'btn text equals fat')
         setTimeout(function () {
           ok(btn.attr('disabled'), 'btn is disabled')
           ok(btn.hasClass('disabled'), 'btn has disabled class')
-          start()
+          done()
         }, 0)
       })
 
-      test("should return reset state", function () {
+      test("should return reset state", function ( assert ) {
+        var done = assert.async();
         var btn = $('<button class="btn" data-loading-text="fat">mdo</button>')
-        equals(btn.html(), 'mdo', 'btn text equals mdo')
+        assert.equal(btn.html(), 'mdo', 'btn text equals mdo')
         btn.button('loading')
-        equals(btn.html(), 'fat', 'btn text equals fat')
-        stop()
+        assert.equal(btn.html(), 'fat', 'btn text equals fat')
         setTimeout(function () {
           ok(btn.attr('disabled'), 'btn is disabled')
           ok(btn.hasClass('disabled'), 'btn has disabled class')
-          start()
-          stop()
           btn.button('reset')
-          equals(btn.html(), 'mdo', 'btn text equals mdo')
+          assert.equal(btn.html(), 'mdo', 'btn text equals mdo')
           setTimeout(function () {
             ok(!btn.attr('disabled'), 'btn is not disabled')
             ok(!btn.hasClass('disabled'), 'btn does not have disabled class')
-            start()
+            done()
           }, 0)
         }, 0)
 

@@ -28,10 +28,10 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       src: {
-        src: ['js/*.js', 'app/*.js']
+        src: ['app/*.js']
       },
       test: {
-        src: ['js/tests/unit/*.js', 'app/tests/unit/*.js']
+        src: ['app/tests/unit/*.js']
       }
     },
 
@@ -96,15 +96,15 @@ module.exports = function(grunt) {
 
     qunit: {
       options: {
-        inject: 'js/tests/unit/phantom.js'
+        inject: 'js/tests/unit/phantom.js',
       },
-      files: ['js/tests/*.html','app/tests/*.html']
+      files: ['app/tests/*.html']
     },
 
     connect: {
       server: {
         options: {
-          port: 3000,
+          port: 8000,
           base: '.'
         }
       }
@@ -158,7 +158,7 @@ module.exports = function(grunt) {
   grunt.registerTask('validate-html', ['jekyll', 'validation']);
 
   // Test task.
-  var testSubtasks = ['dist-css', 'jshint', 'qunit', 'validate-html'];
+  var testSubtasks = ['dist-css', 'jshint', 'connect', 'qunit', 'validate-html'];
   // Only run BrowserStack tests under Travis
   if (process.env.TRAVIS) {
     // Only run BrowserStack tests if this is a mainline commit in twbs/bootstrap, or you have your own BrowserStack key
